@@ -1,0 +1,171 @@
+.checkout {
+  width: min(100% - 2rem, 46rem);
+  margin: 0 auto;
+  padding-block: clamp(3rem, 8vw, 7rem);
+}
+
+.header {
+  max-width: 40rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--deep-grape);
+  font-family: var(--font-bricolage-grotesque), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.header p:last-child {
+  max-width: 37rem;
+  margin: 1.25rem 0 0;
+  font-size: clamp(1.08rem, 2vw, 1.32rem);
+}
+
+.fieldset {
+  min-width: 0;
+  margin: clamp(2.25rem, 6vw, 3.5rem) 0 0;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 2px solid var(--ink);
+  background: var(--signal-green);
+}
+
+.fieldset legend {
+  padding: 0 0.4rem;
+  font-family: var(--font-bricolage-grotesque), sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+}
+
+.requiredNote {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.field {
+  min-width: 0;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.field label,
+.consent label {
+  display: block;
+  font-weight: 700;
+}
+
+.field label::after {
+  content: ' *';
+}
+
+.field input {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 0.35rem;
+  padding: 0.6rem 0.7rem;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+}
+
+.field input[aria-invalid='true'] {
+  border-color: var(--deep-tomato);
+  box-shadow: inset 0 -0.2rem 0 var(--tomato);
+}
+
+.error {
+  margin: 0.4rem 0 0;
+  color: var(--deep-tomato);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.consent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+  border-block: 2px solid var(--ink);
+}
+
+.consent input {
+  width: 1.35rem;
+  height: 1.35rem;
+  margin: 0.15rem 0 0;
+  accent-color: var(--deep-grape);
+}
+
+.consent p {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+}
+
+.submit {
+  min-height: 48px;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--tomato);
+  box-shadow: 0.25rem 0.25rem 0 var(--ink);
+  color: var(--ink);
+  cursor: pointer;
+  font: 700 1.05rem var(--font-bricolage-grotesque), sans-serif;
+  transition: transform 150ms var(--ease-out-quart), box-shadow 150ms var(--ease-out-quart);
+}
+
+.confirmation {
+  margin: 1.25rem 0 0;
+  padding: 1rem;
+  border: 2px solid var(--ink);
+  background: var(--signal-yellow);
+  font-weight: 700;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .submit:hover {
+    box-shadow: 0.1rem 0.1rem 0 var(--ink);
+    transform: translate(0.15rem, 0.15rem);
+  }
+}
+
+@media (max-width: 34rem) {
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .submit {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submit {
+    transition: none;
+  }
+}
