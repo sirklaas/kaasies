@@ -11,7 +11,7 @@
 
 .headerInner {
   display: grid;
-  grid-template-columns: minmax(8.5rem, 12.25rem) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(12rem, 22rem) minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(0.5rem, 2vw, 2rem);
   min-height: 6.75rem;
@@ -27,7 +27,7 @@
 
 .logo {
   display: block;
-  width: min(100%, 12.25rem);
+  width: min(100%, 22rem);
   height: auto;
 }
 
@@ -36,8 +36,14 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
+  padding: 0.4rem 0.5rem;
   overflow-x: auto;
+  scroll-padding-inline: 0.5rem;
   scrollbar-width: thin;
+}
+
+.primaryNav .navLink:focus-visible {
+  outline-offset: -3px;
 }
 
 .navLink,
@@ -156,7 +162,8 @@
     grid-row: 2;
     justify-content: start;
     margin-inline: -1rem;
-    padding-inline: 1rem;
+    padding: 0.4rem 1rem;
+    scroll-padding-inline: 1rem;
     border-top: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
   }
 

@@ -10,7 +10,7 @@
 ## Designbesluiten
 
 - Bricolage Grotesque en Asap blijven via `next/font/google` uit de bestaande layout geladen. Bungee is niet gebruikt, omdat het primaire aangeleverde beeldlogo in header en footer staat.
-- De headerlogo is 196 CSS-px breed op grotere schermen (met 1.6x de prototype-intentie als richtpunt) en behoudt zijn intrinsieke 1759×534-verhouding via `next/image`.
+- De headerlogo heeft op grotere schermen een cap van 352 CSS-px (1,6× de gemeten 220px-prototypegrootte) en behoudt zijn intrinsieke 1759×534-verhouding via `next/image`.
 - Interactie gebruikt alleen een korte transform/box-shadow feedback op het mandje en een markering onder een navigatielink; `prefers-reduced-motion` reduceert alle overgangen.
 
 ## Assets
@@ -40,3 +40,12 @@
 - Skiplink richt naar `#main-content`; keyboardfocus is duidelijk contrastrijk. Header- en footerlinks hebben minimaal 44 px hoogte.
 - De productbeelden zijn alleen voorbereid in `public`; de volgende pagina-/cataloguscomponenten moeten ze als bewijs inzetten via `next/image`, terwijl de illustratie voor redactioneel commentaar blijft.
 - Lokale shell draaide op Node 23.10.0; npm meldt dat het project Node 24 verwacht. Dit is bestaand omgevingsverschil, geen buildfout.
+
+## Fixronde 1 — 2026-08-19
+
+- RED: een tweede componenttest rendert de echte root-layout statisch en verwacht dat de skiplink naar een `main#main-content` met `tabindex="-1"` verwijst. Hij faalde eerst gericht op het ontbrekende tabindex-attribuut. `next/font/google` is alleen in deze test gemockt, omdat dit een compile-time fontloader is en niet de layoutsemantiek onder test.
+- GREEN: `main` is programmatically focusable; de test borgt daarnaast het header-`banner`-landmark naast de benoemde hoofdnavigatie en mandjeroute.
+- De desktoplogo-cap is gecorrigeerd van 196px naar 352px. Op smalle schermen blijft de bestaande compacte 172px-cap actief zonder vervorming.
+- De horizontaal overloopbare navigatie krijgt block- en scrollruimte; haar focusring is naar binnen gezet zodat de globale 3px-focusindicator niet door de scroller wordt afgeknipt.
+- Asap-bodycopy is 1.125rem; compacte navigatie blijft bewust 0.9rem.
+- Checks: componenttest 2/2, volledig Vitest 7/7, typecheck, lint, build en `git diff --check` groen. Visueel gecontroleerd op 1440px en 390px: volledige navigatie beschikbaar, logo proportioneel en geen pagina-overflow.
