@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { formatEuros, priceForWeight } from '@/lib/catalog/money';
 import type { Product } from '@/lib/catalog/types';
 
@@ -41,6 +42,7 @@ export function WeightPicker({ product }: WeightPickerProps) {
       <output aria-live="polite" className={styles.selectedPrice} key={selectedWeightGrams}>
         {formatEuros(selectedPrice)}
       </output>
+      <AddToCartButton product={product} weightGrams={selectedWeightGrams} />
     </fieldset>
   );
 }

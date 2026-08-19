@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { CartProvider } from '@/components/cart/CartProvider';
 import { WeightPicker } from '@/components/catalog/WeightPicker';
 
 const productFixture = {
@@ -13,7 +14,11 @@ const productFixture = {
 
 describe('WeightPicker', () => {
   it('offers only permitted weights, defaults to 500 gram and recalculates the visible price', () => {
-    render(<WeightPicker product={productFixture} />);
+    render(
+      <CartProvider>
+        <WeightPicker product={productFixture} />
+      </CartProvider>,
+    );
 
     expect(screen.getAllByRole('radio')).toHaveLength(productFixture.allowedWeightsGrams.length);
     expect(screen.getByRole('radio', { name: /500 gram/i })).toBeChecked();
