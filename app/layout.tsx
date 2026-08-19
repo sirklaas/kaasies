@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Asap, Bricolage_Grotesque } from 'next/font/google';
 import type { ReactNode } from 'react';
 
+import { SiteFooter } from '@/components/layout/SiteFooter';
+import { SiteHeader } from '@/components/layout/SiteHeader';
 import { siteConfig } from '@/lib/site-config';
 
 import './globals.css';
@@ -28,7 +30,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="nl-NL" className={`${bricolageGrotesque.variable} ${asap.variable}`}>
-      <body>{children}</body>
+      <body>
+        <a className="skipLink" href="#main-content">Sla navigatie over</a>
+        <SiteHeader />
+        <main id="main-content">{children}</main>
+        <SiteFooter />
+      </body>
     </html>
   );
 }

@@ -2,9 +2,9 @@ import { siteConfig } from '@/lib/site-config';
 
 export default function HomePage() {
   return (
-    <main>
-      <h1>{siteConfig.name}</h1>
+    <section aria-labelledby="home-title" className="pageIntro">
+      <h1 id="home-title">{siteConfig.name}</h1>
       <p>{siteConfig.description}</p>
-    </main>
+    </section>
   );
 }
