@@ -7,6 +7,7 @@ import { getActiveProducts } from '@/lib/catalog/local-adapter';
 export const metadata: Metadata = {
   title: 'Kazen met karakter',
   description: 'Kies Stompetoren Jong, Belegen of Oud: echte kaas, ruim de tijd gekregen.',
+  alternates: { canonical: '/shop' },
 };
 
 export default async function ShopPage() {

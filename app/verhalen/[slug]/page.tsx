@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
   return {
     title: campaign.seo.title,
     description: campaign.seo.description,
+    alternates: { canonical: `/verhalen/${campaign.slug}` },
   };
 }
 

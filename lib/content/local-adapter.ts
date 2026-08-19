@@ -1,4 +1,5 @@
 import { campaigns } from './campaigns';
+import { staticPages } from './pages';
 import type { Campaign, CampaignAdapter } from './types';
 
 const isPublic = (campaign: Campaign): boolean => campaign.status !== 'draft';
@@ -39,4 +40,14 @@ export function getCampaigns(): Promise<readonly Campaign[]> {
 
 export function getCampaignBySlug(slug: string): Promise<Campaign | null> {
   return localCampaignAdapter.getCampaignBySlug(slug);
+}
+
+export const localPublicRouteAdapter = {
+  async getStaticRoutes(): Promise<readonly string[]> {
+    return ['/', '/shop', ...Object.values(staticPages).map((page) => `/${page.slug}`), '/verhalen'];
+  },
+};
+
+export function getStaticRoutes(): Promise<readonly string[]> {
+  return localPublicRouteAdapter.getStaticRoutes();
 }

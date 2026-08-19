@@ -7,6 +7,7 @@ const page = staticPages.manifest;
 export const metadata: Metadata = {
   title: page.title,
   description: page.description,
+  alternates: { canonical: '/manifest' },
 };
 
 export default function ManifestPage() {

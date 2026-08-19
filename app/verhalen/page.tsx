@@ -1,12 +1,14 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import styles from '@/components/campaign/campaign-hero.module.css';
 import { getCampaigns } from '@/lib/content/local-adapter';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Verhalen',
   description: 'Korte verhalen over kaas die tijd, aandacht en een scherp mes verdient.',
+  alternates: { canonical: '/verhalen' },
 };
 
 export default async function StoriesPage() {

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
 import { ProductGrid } from '@/components/catalog/ProductGrid';
 import { CampaignHero } from '@/components/campaign/CampaignHero';
@@ -6,6 +7,10 @@ import { getActiveProducts } from '@/lib/catalog/local-adapter';
 import { getActiveCampaign } from '@/lib/content/local-adapter';
 
 import styles from '@/components/catalog/catalog.module.css';
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 export default async function HomePage() {
   const [campaign, products] = await Promise.all([getActiveCampaign(), getActiveProducts()]);
