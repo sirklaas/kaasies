@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:domain": "node --test tests/pocketbase-domain.test.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
