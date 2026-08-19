@@ -48,8 +48,10 @@ export function CartView() {
       </ul>
       <dl className={styles.summary}>
         <div><dt>Subtotaal</dt><dd>{formatEuros(cart.subtotalCents)}</dd></div>
-        <div><dt>Verzendkosten</dt><dd>Bij afrekenen</dd></div>
+        <div><dt>Verzendkosten</dt><dd>{cart.shippingCents ? formatEuros(cart.shippingCents) : 'Gratis'}</dd></div>
+        <div><dt>Totaal</dt><dd>{formatEuros(cart.totalCents)}</dd></div>
       </dl>
+      <p className={styles.shippingNote}>Gratis verzending vanaf €&nbsp;60,00 (prototype).</p>
       <Link className={styles.checkoutLink} href="/checkout">Naar afrekenen</Link>
     </section>
   );

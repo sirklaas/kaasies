@@ -62,6 +62,7 @@
 .summary div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.65rem 0; border-bottom: 2px solid var(--ink); }
 .summary dt, .summary dd { margin: 0; }
 .summary dd { font-weight: 700; text-align: end; }
+.shippingNote { width: min(100%, 28rem); margin: 0.75rem 0 0 auto; font-size: 0.95rem; }
 .checkoutLink { margin-top: 1.5rem; margin-left: auto; }
 .shopLink { padding: 0.65rem 0.85rem; background: var(--signal-yellow); }
 

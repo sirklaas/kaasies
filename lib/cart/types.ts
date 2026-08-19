@@ -34,4 +34,6 @@ export type CartLineDetails = CartLine & {
 export type DerivedCart = {
   lines: CartLineDetails[];
   subtotalCents: number;
+  shippingCents: number;
+  totalCents: number;
 };

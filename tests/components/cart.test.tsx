@@ -69,6 +69,8 @@ describe('cart components', () => {
 
     expect(screen.getByText('De Oude Oproerkraaier')).toBeInTheDocument();
     expect(screen.getAllByText('€\u00a019,43', { normalizer: (value) => value })).toHaveLength(2);
+    expect(screen.getByText('€\u00a06,95', { normalizer: (value) => value })).toBeInTheDocument();
+    expect(screen.getByText('Gratis verzending vanaf €\u00a060,00 (prototype).', { normalizer: (value) => value })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /naar afrekenen/i })).toHaveAttribute('href', '/checkout');
   });
 });

@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { cartReducer, deriveCart, lineId, parseStoredCart } from '@/lib/cart/cart';
+import {
+  cartReducer,
+  deriveCart,
+  FREE_SHIPPING_THRESHOLD_CENTS,
+  lineId,
+  parseStoredCart,
+  SHIPPING_CENTS,
+  shippingCostForSubtotal,
+} from '@/lib/cart/cart';
 
 describe('cart storage and rules', () => {
   it('identifies a product variant by product and selected weight', () => {
@@ -61,5 +69,18 @@ describe('cart storage and rules', () => {
       lineTotalCents: 3886,
     });
     expect(cart.subtotalCents).toBe(3886);
+    expect(cart.shippingCents).toBe(695);
+    expect(cart.totalCents).toBe(4581);
+  });
+
+  it('charges the prototype shipping price below the free-shipping threshold', () => {
+    expect(SHIPPING_CENTS).toBe(695);
+    expect(FREE_SHIPPING_THRESHOLD_CENTS).toBe(6000);
+    expect(shippingCostForSubtotal(5999)).toBe(695);
+  });
+
+  it('makes prototype shipping free at and above the threshold', () => {
+    expect(shippingCostForSubtotal(6000)).toBe(0);
+    expect(shippingCostForSubtotal(8123)).toBe(0);
   });
 });

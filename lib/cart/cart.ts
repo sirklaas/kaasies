@@ -5,6 +5,9 @@ import type { CartAction, CartLine, CartProduct, CartStateV2, DerivedCart } from
 
 export const CART_STORAGE_KEY = 'kaasies-cart-v2';
 export const EMPTY_CART: CartStateV2 = { version: 2, lines: [] };
+/** Temporary prototype pricing, pending commerce configuration. */
+export const SHIPPING_CENTS = 695;
+export const FREE_SHIPPING_THRESHOLD_CENTS = 6000;
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 20;
 
@@ -12,6 +15,17 @@ const catalog: readonly CartProduct[] = products;
 
 export function lineId(productId: string, weightGrams: number): string {
   return `${productId}:${weightGrams}`;
+}
+
+export function shippingCostForSubtotal(subtotalCents: number): number {
+  if (!Number.isInteger(subtotalCents)) {
+    throw new TypeError('subtotalCents must be an integer.');
+  }
+  if (subtotalCents < 0) {
+    throw new RangeError('subtotalCents must not be negative.');
+  }
+
+  return subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS ? 0 : SHIPPING_CENTS;
 }
 
 function validQuantity(value: unknown): number {
@@ -141,8 +155,8 @@ export function deriveCart(state: CartStateV2, catalogToUse: readonly CartProduc
     }];
   });
 
-  return {
-    lines,
-    subtotalCents: lines.reduce((total, line) => total + line.lineTotalCents, 0),
-  };
+  const subtotalCents = lines.reduce((total, line) => total + line.lineTotalCents, 0);
+  const shippingCents = shippingCostForSubtotal(subtotalCents);
+
+  return { lines, subtotalCents, shippingCents, totalCents: subtotalCents + shippingCents };
 }
