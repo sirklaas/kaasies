@@ -8,6 +8,8 @@ test-results/
 playwright-report/
 .eslintcache
 *.tsbuildinfo
+AGENTS.md
+CLAUDE.md
 .env
 .env.*
 !.env.example

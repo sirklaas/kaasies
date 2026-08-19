@@ -24,3 +24,12 @@ npm run test:e2e -- tests/e2e/site-audit.spec.ts  # 1 passed
 ```
 
 The Next development server emits its existing LCP image advisory during the browser run; the audit observed no browser `console.error` messages.
+
+## Fix round 1
+
+- Playwright preview runs now use `PLAYWRIGHT_BASE_URL`; its presence disables the local `webServer`.
+- `/mandje` and `/checkout` now provide distinct title, description and canonical metadata, and set `noindex, nofollow`. They remain outside the 12-route content sitemap.
+- The browser audit includes both transactional routes and waits for two client animation frames after navigation before checking console errors.
+- Added durable ignores for framework-generated `AGENTS.md` and `CLAUDE.md`. A final production build restored the tracked `next-env.d.ts` file, leaving no generated files to commit.
+
+Verification for this round: 39 unit tests, 6 domain tests, typecheck, lint, production build, and the expanded Playwright route audit all completed successfully.

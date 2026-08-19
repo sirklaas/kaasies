@@ -1,4 +1,4 @@
-import type { MetadataRoute } from 'next';
+import type { Metadata, MetadataRoute } from 'next';
 import { describe, expect, it } from 'vitest';
 
 type Sitemap = () => Promise<MetadataRoute.Sitemap>;
@@ -9,6 +9,15 @@ const loadSitemap = async (): Promise<Sitemap | undefined> => {
   } catch {
     return undefined;
   }
+};
+
+const pageMetadataLoaders = {
+  mandje: () => import('@/app/mandje/page'),
+  checkout: () => import('@/app/checkout/page'),
+};
+
+const loadPageMetadata = async (segment: keyof typeof pageMetadataLoaders): Promise<Metadata | undefined> => {
+  return (await pageMetadataLoaders[segment]()).metadata as Metadata | undefined;
 };
 
 describe('public sitemap', () => {
@@ -35,7 +44,31 @@ describe('public sitemap', () => {
       'https://kaasies.com/verhalen/breekbaar-is-een-compliment',
     ]));
     expect(urls).not.toContain('https://kaasies.com/verhalen/lees-de-achterkant');
+    expect(urls).not.toContain('https://kaasies.com/mandje');
+    expect(urls).not.toContain('https://kaasies.com/checkout');
     expect(urls).toHaveLength(12);
     expect(urls?.every((url) => url.startsWith('https://kaasies.com'))).toBe(true);
+  });
+});
+
+describe('transactional route metadata', () => {
+  it('keeps cart and checkout canonical but out of search results', async () => {
+    const [cart, checkout] = await Promise.all([
+      loadPageMetadata('mandje'),
+      loadPageMetadata('checkout'),
+    ]);
+
+    expect(cart).toMatchObject({
+      title: 'Je mandje',
+      description: 'Bekijk de gekozen Kaasies-kazen en pas je bestelling aan voordat je verdergaat.',
+      alternates: { canonical: '/mandje' },
+      robots: { index: false, follow: false },
+    });
+    expect(checkout).toMatchObject({
+      title: 'Bestelling afronden',
+      description: 'Rond je Kaasies-bestelling af met je gegevens en bezorgvoorkeuren.',
+      alternates: { canonical: '/checkout' },
+      robots: { index: false, follow: false },
+    });
   });
 });

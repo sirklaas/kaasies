@@ -2,8 +2,13 @@ import { expect, test } from '@playwright/test';
 
 import sitemap from '../../app/sitemap';
 
-test('every sitemap route has complete, crawlable page metadata', async ({ page }) => {
+test('every content and transactional route has complete, crawlable page metadata', async ({ page }) => {
   const sitemapEntries = await sitemap();
+  const auditedUrls = [
+    ...sitemapEntries.map(({ url }) => url),
+    'https://kaasies.com/mandje',
+    'https://kaasies.com/checkout',
+  ];
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -12,9 +17,15 @@ test('every sitemap route has complete, crawlable page metadata', async ({ page 
     }
   });
 
-  for (const { url } of sitemapEntries) {
+  for (const url of auditedUrls) {
     const route = new URL(url).pathname;
+    const consoleErrorCountBeforeNavigation = consoleErrors.length;
     const response = await page.goto(route);
+
+    await page.waitForLoadState('load');
+    await page.evaluate(() => new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    }));
 
     expect(response?.status(), `${route} should return 200`).toBe(200);
     await expect(page.locator('h1'), `${route} should have one h1`).toHaveCount(1);
@@ -31,6 +42,6 @@ test('every sitemap route has complete, crawlable page metadata', async ({ page 
       await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth),
       `${route} should not overflow horizontally`,
     ).toBe(true);
-    expect(consoleErrors, `${route} should not log console errors`).toEqual([]);
+    expect(consoleErrors.slice(consoleErrorCountBeforeNavigation), `${route} should not log console errors`).toEqual([]);
   }
 });

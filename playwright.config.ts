@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test';
 
-const baseURL = process.env.BASE_URL ?? 'http://127.0.0.1:3000';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3000';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -8,7 +8,7 @@ export default defineConfig({
     baseURL,
     viewport: { width: 1280, height: 720 },
   },
-  webServer: process.env.BASE_URL
+  webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
         command: 'npm run dev -- --hostname 127.0.0.1 --port 3000',
