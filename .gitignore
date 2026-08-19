@@ -3,8 +3,11 @@
 .superpowers/
 .DS_Store
 node_modules/
+.next/
 test-results/
 playwright-report/
+.eslintcache
+*.tsbuildinfo
 .env
 .env.*
 !.env.example

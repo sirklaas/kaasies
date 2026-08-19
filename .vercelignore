@@ -1,7 +1,9 @@
-back.html
-assets/back.css
-assets/back.js
-assets/back-core.mjs
+.git/
+.github/
+.next/
+.superpowers/
+.worktrees/
+node_modules/
 tests/
 docs/
 BRANDVOICE.md
