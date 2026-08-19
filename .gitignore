@@ -1,0 +1,9 @@
+.vercel
+.superpowers/
+.DS_Store
+node_modules/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example

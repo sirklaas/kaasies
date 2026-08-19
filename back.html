@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Beheer de volledige orderreis van Kaasies’: van betaling en upsell tot verzendlabel en review.">
+  <title>Order Journey · Kaasies’ Back Office</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/back.css">
+</head>
+<body class="back-body">
+  <div class="back-app">
+    <header class="back-header">
+      <a class="back-brand" href="index.html"><img class="brand-logo" src="assets/brand/kaasies-logo.webp" width="1759" height="534" alt="Kaasies — Maar alleen echte"><span class="back-badge">Back office</span></a>
+      <nav class="back-nav" aria-label="Back-office navigatie">
+        <button class="back-nav-link" type="button" data-back-tab="orders">Bestellingen</button>
+        <button class="back-nav-link active" type="button" data-back-tab="journey">Journey</button>
+        <button class="back-nav-link" type="button" disabled>Producten</button>
+        <button class="back-nav-link" type="button" disabled>Klanten</button>
+      </nav>
+      <div class="back-head-actions"><span class="system-ok"><i></i> Alles werkt</span><a class="button" href="index.html">Bekijk winkel ↗</a></div>
+    </header>
+
+    <main>
+      <section class="back-intro">
+        <div><span class="eyebrow">De reis na de klik</span><h1>Van betaald naar<br><em>blij verrast.</em></h1></div>
+        <p>Elke bestelling krijgt aandacht op het juiste moment. Zet acties aan, verander de boodschap en test de hele reis zonder echte klanten lastig te vallen.</p>
+      </section>
+
+      <section class="kpis" aria-label="Dagoverzicht">
+        <article><span>Omzet vandaag</span><strong>€ 684,35</strong><small>↑ 18% t.o.v. gisteren</small></article>
+        <article><span>Open orders</span><strong>14</strong><small>3 vragen aandacht</small></article>
+        <article><span>Gem. order</span><strong>€ 48,88</strong><small>Doel: € 52</small></article>
+        <article class="attention"><span>Even naar kijken</span><strong>3</strong><small>1 adres · 2 voorraad</small></article>
+      </section>
+
+      <div class="mobile-tabs" aria-label="Mobiele weergave"><button class="active" data-mobile-panel="orders">Orders</button><button data-mobile-panel="journey">Journey</button><button data-mobile-panel="editor">Editor</button></div>
+
+      <section class="workspace">
+        <aside class="orders-panel mobile-panel" data-panel="orders">
+          <div class="panel-head"><div><span class="eyebrow">Vandaag</span><h2>Bestellingen</h2></div><span class="count-badge">14</span></div>
+          <div class="order-filters" role="group" aria-label="Filter bestellingen">
+            <button type="button" data-order-filter="all" aria-pressed="true">Alle</button>
+            <button type="button" data-order-filter="attention" aria-pressed="false">Actie nodig</button>
+            <button type="button" data-order-filter="shipping" aria-pressed="false">Onderweg</button>
+          </div>
+          <div class="orders-list" data-orders></div>
+        </aside>
+
+        <section class="journey-panel mobile-panel active" data-panel="journey">
+          <div class="journey-head">
+            <div><span class="eyebrow">Standaard orderflow</span><h2>Order Journey</h2><p data-order-context>Voorbeeld voor order #K-1048</p></div>
+            <div class="journey-actions"><button class="icon-button" type="button" data-reset title="Herstel standaardflow">↺</button><button class="button primary" type="button" data-add-action>Nieuwe actie +</button></div>
+          </div>
+          <ol class="steps" data-steps></ol>
+          <div class="journey-end"><span>✓</span><strong>Bestelling afgerond.</strong><small>En hopelijk snel weer terug.</small></div>
+        </section>
+
+        <aside class="editor-panel mobile-panel" data-panel="editor" data-editor>
+          <div class="editor-empty"><span>↖</span><h2>Kies een actie</h2><p>Open een stap om timing, tekst en gedrag aan te passen.</p></div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="add-dialog" data-add-dialog>
+    <form method="dialog" data-add-form>
+      <div class="dialog-head"><div><span class="eyebrow">Nieuwe stap</span><h2>Wat moet er gebeuren?</h2></div><button type="button" class="icon-button" data-close-dialog aria-label="Sluiten">×</button></div>
+      <label>Naam<input name="newName" required placeholder="Bijv. Koeltas terugvragen"></label>
+      <label>Type<select name="newType"><option value="email">E-mail</option><option value="manual">Handmatige taak</option><option value="internal">Interne actie</option><option value="system">Systeemcheck</option><option value="upsell">Upsell</option></select></label>
+      <label>Timing<input name="newTiming" required value="Na 1 dag"></label>
+      <label>Instructie<textarea name="newInstruction" required placeholder="Beschrijf precies wat er moet gebeuren."></textarea></label>
+      <p class="form-error" data-add-error role="alert"></p>
+      <div class="dialog-actions"><button class="button" type="button" data-close-dialog>Annuleer</button><button class="button primary" type="submit">Voeg toe +</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" data-toast role="status" aria-live="polite"></div>
+  <script type="module" src="assets/back.js"></script>
+</body>
+</html>
