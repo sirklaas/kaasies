@@ -40,13 +40,14 @@ describe('public sitemap', () => {
       'https://kaasies.com/service',
       'https://kaasies.com/contact',
       'https://kaasies.com/verhalen',
+      'https://kaasies.com/verhalen/soms-is-kaas-geen-kaas',
       'https://kaasies.com/verhalen/geef-kaas-haar-tijd-terug',
       'https://kaasies.com/verhalen/breekbaar-is-een-compliment',
     ]));
     expect(urls).not.toContain('https://kaasies.com/verhalen/lees-de-achterkant');
     expect(urls).not.toContain('https://kaasies.com/mandje');
     expect(urls).not.toContain('https://kaasies.com/checkout');
-    expect(urls).toHaveLength(25);
+    expect(urls).toHaveLength(26);
     expect(urls?.every((url) => url.startsWith('https://kaasies.com'))).toBe(true);
   });
 });

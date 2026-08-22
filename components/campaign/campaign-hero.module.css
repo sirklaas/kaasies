@@ -44,11 +44,33 @@
   text-transform: uppercase;
 }
 
+.hero h1 {
+  font-size: clamp(2.75rem, 5vw, 5rem);
+  overflow-wrap: normal;
+}
+
 .intro {
   max-width: 31rem;
   margin: 1.5rem 0 0;
   font-size: clamp(1.25rem, 2.25vw, 1.7rem);
   line-height: 1.2;
+}
+
+.heroLine {
+  max-width: 32rem;
+  margin: 0.65rem 0 0;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.25;
+}
+
+.payoff {
+  max-width: 28rem;
+  margin: 1.2rem 0 0;
+  color: var(--deep-grape);
+  font-family: var(--font-bricolage-grotesque), sans-serif;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.05;
 }
 
 .cta {

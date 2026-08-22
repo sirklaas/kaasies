@@ -13,9 +13,11 @@ export function CampaignHero({ campaign }: CampaignHeroProps) {
   return (
     <section aria-labelledby="campaign-title" className={styles.hero}>
       <div className={styles.heroCopy}>
-        <p className={styles.kicker}>Geen nepkaas</p>
+        <p className={styles.kicker}>{campaign.kicker}</p>
         <h1 id="campaign-title">{campaign.title}</h1>
         <p className={styles.intro}>{campaign.intro}</p>
+        {campaign.heroBody?.map((line) => <p className={styles.heroLine} key={line}>{line}</p>)}
+        {campaign.payoff ? <p className={styles.payoff}>{campaign.payoff}</p> : null}
         <Link className={styles.cta} href={campaign.cta.href}>
           {campaign.cta.label}
         </Link>

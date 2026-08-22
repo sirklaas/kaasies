@@ -2,9 +2,40 @@ import type { Campaign } from './types';
 
 export const campaigns = [
   {
-    slug: 'geef-kaas-haar-tijd-terug',
+    slug: 'soms-is-kaas-geen-kaas',
     status: 'active',
+    publishedAt: '2026-08-22',
+    kicker: 'De E-fabriek',
+    title: 'Soms is kaas helemaal geen kaas.',
+    intro: 'Ik kwam er laatst achter dat kaas soms helemaal geen kaas is. Maar gewoon een chemisch zootje.',
+    heroBody: [
+      'Palmolie. Kleurstoffen. Smaakstoffen. Conserveringsmiddelen.',
+      'De hele E-fabriek zit erin.',
+      'Dat kan niet. Dat mag niet. Daarom kaasies.com.',
+    ],
+    payoff: 'Echt alleen echte kaas. Dat is Kaasies',
+    body: [
+      'Palmolie. Kleurstoffen. Smaakstoffen. Conserveringsmiddelen. De hele E-fabriek zit erin.',
+      'Dat kan niet. Dat mag niet. Daarom kaasies.com.',
+      'Echt alleen echte kaas. Dat is Kaasies',
+    ],
+    cta: { label: 'Bekijk echte kaas →', href: '/shop' },
+    image: {
+      src: '/illustrations/e-fabriek-v1.jpg',
+      alt: 'Een grafische kaas die vanbinnen een chemische fabriek met leidingen, vaten en laboratoriumflessen blijkt te zijn.',
+      width: 1536,
+      height: 1024,
+    },
+    seo: {
+      title: 'Soms is kaas helemaal geen kaas',
+      description: 'Palmolie en een E-fabriek zijn geen kaas. Kaasies kiest echt alleen echte kaas.',
+    },
+  },
+  {
+    slug: 'geef-kaas-haar-tijd-terug',
+    status: 'archived',
     publishedAt: '2026-08-19',
+    kicker: 'Geen nepkaas',
     title: 'Rijpen kun je niet haasten.',
     intro: 'Smaak houdt zich niet aan kwartaalcijfers. Geef melk, culturen en vakmanschap de tijd.',
     body: [
@@ -27,6 +58,7 @@ export const campaigns = [
     slug: 'breekbaar-is-een-compliment',
     status: 'archived',
     publishedAt: '2026-08-12',
+    kicker: 'Kaas met karakter',
     title: 'Breekbaar is een compliment.',
     intro: 'Een kaas die brokkelt hoeft zich niet te verontschuldigen.',
     body: [
@@ -49,6 +81,7 @@ export const campaigns = [
     slug: 'lees-de-achterkant',
     status: 'draft',
     publishedAt: '2026-08-26',
+    kicker: 'Lees wat je eet',
     title: 'Draai ’m eens om.',
     intro: 'Een voorkant kan alles roepen. De achterkant moet vertellen wat erin zit.',
     body: ['Lees. Vraag. Proef. Kies bewust.'],

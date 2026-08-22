@@ -4,8 +4,11 @@ export type Campaign = {
   slug: string;
   status: CampaignStatus;
   publishedAt: string;
+  kicker: string;
   title: string;
   intro: string;
+  heroBody?: readonly string[];
+  payoff?: string;
   body: readonly string[];
   cta: { label: string; href: string };
   image: { src: string; alt: string; width: number; height: number };

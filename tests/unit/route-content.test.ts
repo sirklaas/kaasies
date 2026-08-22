@@ -22,6 +22,17 @@ describe('catalog route content', () => {
     expect(screen.getByRole('link', { name: /watertandend verder/i })).toHaveAttribute('href', '/shop');
   });
 
+  it('turns the E-fabriek belief into this week’s complete hero message', async () => {
+    render(await HomePage());
+
+    expect(screen.getByText('De E-fabriek')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Soms is kaas helemaal geen kaas.' })).toBeInTheDocument();
+    expect(screen.getByText(/palmolie.*kleurstoffen.*smaakstoffen.*conserveringsmiddelen/i)).toBeInTheDocument();
+    expect(screen.getByText(/daarom kaasies\.com/i)).toBeInTheDocument();
+    expect(screen.getByText('Echt alleen echte kaas. Dat is Kaasies')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /bekijk echte kaas/i })).toHaveAttribute('href', '/shop');
+  });
+
   it('shows exactly the active catalog products in the shop', async () => {
     render(await ShopPage());
 
