@@ -30,6 +30,7 @@ services:
         condition: service_healthy
     environment:
       LISTMONK_app__address: 0.0.0.0:9000
+      LISTMONK_app__root_url: ${LISTMONK_PUBLIC_URL}
       LISTMONK_db__host: db
       LISTMONK_db__port: 5432
       LISTMONK_db__user: ${POSTGRES_USER}
@@ -48,7 +49,7 @@ services:
     volumes:
       - listmonk_uploads:/listmonk/uploads
       - ./templates/public:/listmonk/static/public:ro
-      - ./templates/email:/listmonk/static/email:ro
+      - ./templates/email:/listmonk/static/email-templates:ro
     networks: [listmonk_internal]
 
 networks:
