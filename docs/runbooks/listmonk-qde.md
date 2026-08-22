@@ -157,12 +157,17 @@ the runbook. The final write uses `sudo tee`, so the restricted backup
 directory remains root-owned and the shell never attempts an unprivileged
 redirection into it:
 
-```sh
+```bash
+set -euo pipefail
 cd /opt/kaasies-listmonk
 backup_file=/var/backups/kaasies-listmonk/listmonk-$(date -u +%Y%m%dT%H%M%SZ).dump
-sudo docker compose exec -T db sh -lc 'pg_dump -Fc -U "$POSTGRES_USER" "$POSTGRES_DB"' | sudo tee "$backup_file" >/dev/null
-sudo chown root:kaasies-listmonk-ops "$backup_file"
-sudo chmod 0640 "$backup_file"
+temporary_backup_file="${backup_file}.partial"
+trap 'sudo rm -f "$temporary_backup_file"' EXIT
+sudo docker compose exec -T db sh -lc 'pg_dump -Fc -U "$POSTGRES_USER" "$POSTGRES_DB"' | sudo tee "$temporary_backup_file" >/dev/null
+sudo chown root:kaasies-listmonk-ops "$temporary_backup_file"
+sudo chmod 0640 "$temporary_backup_file"
+sudo mv "$temporary_backup_file" "$backup_file"
+trap - EXIT
 ```
 
 Retain backups according to the approved retention policy in access-restricted
@@ -170,23 +175,43 @@ storage. At least once per release cycle, restore the newest custom-format
 backup into an isolated test PostgreSQL database using the same pinned
 PostgreSQL image and `pg_restore`:
 
-```sh
+```bash
+set -Eeuo pipefail
 cd /opt/kaasies-listmonk
 backup_file=$(sudo find /var/backups/kaasies-listmonk -maxdepth 1 -type f -name 'listmonk-*.dump' -printf '%T@ %p\n' | sort -nr | head -n 1 | cut -d ' ' -f 2-)
 test -n "$backup_file"
 postgres_image=$(sudo docker compose --env-file /etc/kaasies-listmonk/listmonk.env config --images db)
 test -n "$postgres_image"
-sudo docker run -d --rm --name listmonk-restore-test --network none --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=1g --env-file /etc/kaasies-listmonk/listmonk.env -v "$backup_file:/restore.dump:ro" "$postgres_image"
-until sudo docker exec listmonk-restore-test sh -lc 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'; do sleep 1; done
-sudo docker exec listmonk-restore-test sh -lc 'pg_restore --clean --if-exists -U "$POSTGRES_USER" -d "$POSTGRES_DB" /restore.dump'
-sudo docker exec listmonk-restore-test sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Atqc "select 1"'
-sudo docker rm -f listmonk-restore-test
+restore_container=listmonk-restore-test
+cleanup_restore() { sudo docker rm -f "$restore_container" >/dev/null 2>&1 || true; }
+trap cleanup_restore EXIT
+sudo docker run -d --rm --name "$restore_container" --network none --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=1g --env-file /etc/kaasies-listmonk/listmonk.env -v "$backup_file:/restore.dump:ro" "$postgres_image" >/dev/null
+restore_ready=false
+for attempt in $(seq 1 30); do
+  if sudo docker exec "$restore_container" sh -lc 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' >/dev/null 2>&1; then
+    restore_ready=true
+    break
+  fi
+  sleep 1
+done
+if [ "$restore_ready" != true ]; then
+  printf '%s\n' 'Timed out waiting 30 seconds for the isolated restore database.' >&2
+  exit 1
+fi
+sudo docker exec "$restore_container" sh -lc 'pg_restore --clean --if-exists -U "$POSTGRES_USER" -d "$POSTGRES_DB" /restore.dump'
+restore_probe=$(sudo docker exec "$restore_container" sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Atqc "select 1"')
+test "$restore_probe" = 1
+cleanup_restore
+trap - EXIT
 ```
 
 The temporary restore container has no network and uses an in-memory data
 directory; it never mounts a production database volume. Capture the passing
 restore output in the change record. A successful restore is a mandatory
-production publication gate.
+production publication gate. The snippets require Bash: `set -o pipefail`
+propagates a failed database dump or privileged write, and `set -e` stops the
+restore before it can be recorded as successful after a failed restore or
+validation query.
 
 ## Upgrade procedure
 
