@@ -19,7 +19,9 @@ account or constrained deployment path before executing this runbook.
 
 ## Deployment and backup directories
 
-Reserve these dedicated paths:
+No Listmonk application, backup, or secret path existed during the Task 1
+inspection. The following are proposed Task 2/3 layout choices, subject to
+approval when the least-privilege operational path is created:
 
 - Application: `/opt/kaasies-listmonk`
 - Backups: `/var/backups/kaasies-listmonk`
@@ -37,9 +39,9 @@ port only to the loopback interface; Nginx will proxy `nieuwsbrief.kaasies.com`
 to that loopback listener. Do not install a competing proxy or publish the
 database port.
 
-Use port `9000` for the loopback-only Listmonk listener in the Compose file.
-Configure its host binding to the loopback interface using the Compose syntax
-supported by the installed Docker version.
+Port `9000` is a proposed Task 2/3 loopback-only Listmonk listener, not an
+observed Task 1 service. Configure its host binding to the loopback interface
+using the Compose syntax supported by the installed Docker version.
 
 The PostgreSQL service belongs only on the Compose-internal network and has no
 host `ports` entry.
@@ -78,10 +80,14 @@ secret file.
 
 After Docker, Docker Compose, the operational account, the secret file, and
 the reviewed Compose definition are in place, create the dedicated directories
-and deploy from the application directory:
+with a restricted backup-reader group. Task 3 must create the
+`kaasies-listmonk-ops` group and add only the approved operations account to
+it; this is a proposed deployment control, not observed Task 1 state. Deploy
+from the application directory:
 
 ```sh
-sudo install -d -m 0750 /opt/kaasies-listmonk /var/backups/kaasies-listmonk
+sudo install -d -o root -g kaasies-listmonk-ops -m 0750 /opt/kaasies-listmonk
+sudo install -d -o root -g kaasies-listmonk-ops -m 2750 /var/backups/kaasies-listmonk
 cd /opt/kaasies-listmonk
 sudo docker compose --env-file /etc/kaasies-listmonk/listmonk.env config --quiet
 sudo docker compose --env-file /etc/kaasies-listmonk/listmonk.env pull
@@ -120,29 +126,67 @@ sudo docker compose logs --tail=100 listmonk
 
 Verify that the Listmonk container is healthy, the database is reachable only
 from the Compose network, the certificate is valid, and no secret appears in
-the logs. Then use an internal test list and a low send rate before enabling
-the production double-opt-in list.
+the logs.
+
+### Mandatory production publication gates
+
+Do not enable the production double-opt-in list or publish any customer-facing
+newsletter entry point until every gate below has recorded passing evidence:
+
+1. A message sent to the internal test list is successfully delivered to a
+   test mailbox and its links work.
+2. Resend DNS authentication is verified: SPF, DKIM, and DMARC alignment pass
+   for the sending domain.
+3. The unsubscribe link works end to end and the subscriber is no longer sent
+   to by a follow-up internal test campaign.
+4. The newest database backup has been restored successfully into an isolated
+   test PostgreSQL database without mounting or changing production volumes.
+5. Kaasies branding is reviewed and accepted for every public newsletter form,
+   Listmonk public page, and customer email, including the confirmation,
+   welcome, campaign, preference, unsubscribe, error, and plain-text states.
+
+An internal test list and conservative send rate are required rollout controls;
+they are not substitutes for any publication gate.
 
 ## Backup and restore test
 
-Take a compressed database backup before each deployment and daily thereafter.
-Use the database service’s environment variables inside the container so the
-command never places a database password in shell history or the runbook:
+Take a custom-format PostgreSQL backup before each deployment and daily
+thereafter. Use the database service’s environment variables inside the
+container so the command never places a database password in shell history or
+the runbook. The final write uses `sudo tee`, so the restricted backup
+directory remains root-owned and the shell never attempts an unprivileged
+redirection into it:
 
 ```sh
 cd /opt/kaasies-listmonk
-backup_file=/var/backups/kaasies-listmonk/listmonk-$(date -u +%Y%m%dT%H%M%SZ).sql.gz
-sudo docker compose exec -T db sh -lc 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' | gzip -9 > "$backup_file"
-gzip -t "$backup_file"
+backup_file=/var/backups/kaasies-listmonk/listmonk-$(date -u +%Y%m%dT%H%M%SZ).dump
+sudo docker compose exec -T db sh -lc 'pg_dump -Fc -U "$POSTGRES_USER" "$POSTGRES_DB"' | sudo tee "$backup_file" >/dev/null
+sudo chown root:kaasies-listmonk-ops "$backup_file"
 sudo chmod 0640 "$backup_file"
 ```
 
 Retain backups according to the approved retention policy in access-restricted
-storage. At least once per release cycle, restore the newest backup into an
-isolated test PostgreSQL database using the same pinned PostgreSQL image, run
-`pg_restore` or `psql` against that isolated database as appropriate for the
-dump format, and verify that the production database volumes were never
-mounted by the test container.
+storage. At least once per release cycle, restore the newest custom-format
+backup into an isolated test PostgreSQL database using the same pinned
+PostgreSQL image and `pg_restore`:
+
+```sh
+cd /opt/kaasies-listmonk
+backup_file=$(sudo find /var/backups/kaasies-listmonk -maxdepth 1 -type f -name 'listmonk-*.dump' -printf '%T@ %p\n' | sort -nr | head -n 1 | cut -d ' ' -f 2-)
+test -n "$backup_file"
+postgres_image=$(sudo docker compose --env-file /etc/kaasies-listmonk/listmonk.env config --images db)
+test -n "$postgres_image"
+sudo docker run -d --rm --name listmonk-restore-test --network none --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=1g --env-file /etc/kaasies-listmonk/listmonk.env -v "$backup_file:/restore.dump:ro" "$postgres_image"
+until sudo docker exec listmonk-restore-test sh -lc 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'; do sleep 1; done
+sudo docker exec listmonk-restore-test sh -lc 'pg_restore --clean --if-exists -U "$POSTGRES_USER" -d "$POSTGRES_DB" /restore.dump'
+sudo docker exec listmonk-restore-test sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Atqc "select 1"'
+sudo docker rm -f listmonk-restore-test
+```
+
+The temporary restore container has no network and uses an in-memory data
+directory; it never mounts a production database volume. Capture the passing
+restore output in the change record. A successful restore is a mandatory
+production publication gate.
 
 ## Upgrade procedure
 
@@ -153,8 +197,11 @@ mounted by the test container.
 3. Review release notes and update only the intended pinned image tag in the
    Compose definition.
 4. Run the deploy commands above, then the local and HTTPS health checks.
-5. Run a double-opt-in flow only against the internal test list; confirm the
-   branded confirmation, unsubscribe, and preference paths work.
+5. Re-run every mandatory production publication gate, including successful
+   test-list delivery, DNS authentication, unsubscribe verification, isolated
+   backup restoration, and Kaasies branding review for every public form,
+   page, and customer email. Production remains disabled until all evidence is
+   recorded as passing.
 
 ## Rollback procedure
 
