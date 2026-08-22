@@ -76,6 +76,19 @@ binds port 9000 only on the loopback interface for the application. Confirm the 
 Listmonk administrator, database, and API values are present only in the host
 secret file.
 
+## Repository Compose validation
+
+Before copying the stack to QDE, validate the checked-in Compose contract with
+its intentionally non-secret example environment:
+
+```bash
+docker compose --env-file ops/listmonk/.env.example -f ops/listmonk/compose.yml config --quiet
+```
+
+On QDE, validate the same definition with `/etc/kaasies-listmonk/listmonk.env`
+instead. Do not deploy with `.env.example`, which contains placeholders rather
+than credentials.
+
 ## Deploy commands
 
 After Docker, Docker Compose, the operational account, the secret file, and
