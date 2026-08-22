@@ -46,7 +46,7 @@ describe('public sitemap', () => {
     expect(urls).not.toContain('https://kaasies.com/verhalen/lees-de-achterkant');
     expect(urls).not.toContain('https://kaasies.com/mandje');
     expect(urls).not.toContain('https://kaasies.com/checkout');
-    expect(urls).toHaveLength(12);
+    expect(urls).toHaveLength(25);
     expect(urls?.every((url) => url.startsWith('https://kaasies.com'))).toBe(true);
   });
 });

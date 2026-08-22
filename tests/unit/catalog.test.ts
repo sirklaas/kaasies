@@ -13,14 +13,25 @@ describe('catalog money rules', () => {
 });
 
 describe('local catalog adapter', () => {
-  it('returns the three active cheeses in maturity order', async () => {
+  it('returns the complete sixteen-cheese Stompetoren starter range', async () => {
     const products = await getActiveProducts();
 
-    expect(products).toHaveLength(3);
-    expect(products.map((product) => product.slug)).toEqual(['jong', 'belegen', 'oud']);
+    expect(products).toHaveLength(16);
+    expect(products.map((product) => product.slug)).toEqual([
+      'jong', 'jong-belegen', 'belegen', 'extra-belegen', 'oud', 'grand-cru',
+      'komijn-jong', 'komijn-jong-belegen', 'komijn-belegen', 'komijn-oud',
+      '35-plus-jong-belegen', '35-plus-belegen', '35-plus-extra-belegen',
+      '35-plus-oud', '35-plus-kruiden', 'minder-zout',
+    ]);
+    expect(products.every((product) => product.stockGrams === 16_000)).toBe(true);
+    expect(products.every((product) => product.allowedWeightsGrams.length === 1)).toBe(true);
+    expect(products.every((product) => product.allowedWeightsGrams[0] === 1000)).toBe(true);
+    expect(products.every((product) => product.image.src.startsWith('/images/products/stompetoren/'))).toBe(true);
+    expect(new Set(products.map((product) => product.image.src)).size).toBe(12);
   });
 
-  it('does not expose Grand Cru as the Oud product', async () => {
-    expect(await getProductBySlug('grand-cru')).toBeNull();
+  it('exposes Grand Cru as its own product rather than treating it as Oud', async () => {
+    expect((await getProductBySlug('grand-cru'))?.id).toBe('stompetoren-grand-cru');
+    expect((await getProductBySlug('oud'))?.id).toBe('stompetoren-oud');
   });
 });

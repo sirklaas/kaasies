@@ -11,8 +11,8 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product }: ProductCardProps) {
-  const firstWeight = product.allowedWeightsGrams[0];
-  const fromPrice = priceForWeight(product.pricePerKgCents, firstWeight);
+  const sellingWeight = product.allowedWeightsGrams[0];
+  const price = priceForWeight(product.pricePerKgCents, sellingWeight);
 
   return (
     <article className={styles.productCard}>
@@ -29,9 +29,9 @@ export function ProductCard({ product }: ProductCardProps) {
         <p className={styles.productMaturation}>{product.maturation}</p>
         <h2>{product.name}</h2>
         <p>{product.shortDescription}</p>
-        <p className={styles.productPrice}>Vanaf {formatEuros(fromPrice)}</p>
+        <p className={styles.productPrice}>{formatEuros(price)} per kg</p>
         <p className={styles.weightHint}>
-          Stukken van {product.allowedWeightsGrams.map((weight) => `${weight} g`).join(', ')}
+          Per 1 kg
         </p>
         <Link aria-label={`Bekijk kaas: ${product.name}`} className={styles.productLink} href={`/shop/${product.slug}`}>
           Bekijk kaas <span aria-hidden="true">→</span>

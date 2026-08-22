@@ -7,9 +7,9 @@ export const CART_STORAGE_KEY = 'kaasies-cart-v2';
 export const EMPTY_CART: CartStateV2 = { version: 2, lines: [] };
 /** Temporary prototype pricing, pending commerce configuration. */
 export const SHIPPING_CENTS = 695;
-export const FREE_SHIPPING_THRESHOLD_CENTS = 6000;
+export const FREE_SHIPPING_THRESHOLD_CENTS = 5000;
 const MIN_QUANTITY = 1;
-const MAX_QUANTITY = 20;
+const MAX_QUANTITY = 16;
 
 const catalog: readonly CartProduct[] = products;
 
@@ -79,10 +79,11 @@ function normalizeLines(lines: unknown, catalogToUse: readonly CartProduct[] = c
 
     const id = lineId(product.id, weightGrams);
     const current = quantitiesById.get(id);
+    const availableQuantity = Math.floor(product.stockGrams / weightGrams);
     quantitiesById.set(id, {
       productId: product.id,
       weightGrams,
-      quantity: Math.min((current?.quantity ?? 0) + normalizedQuantity, MAX_QUANTITY),
+      quantity: Math.min((current?.quantity ?? 0) + normalizedQuantity, MAX_QUANTITY, availableQuantity),
     });
   }
 
@@ -108,7 +109,7 @@ export function parseStoredCart(raw: string | null, catalogToUse: readonly CartP
       const v1Lines = Array.isArray(stored.lines)
         ? stored.lines.map((line) => ({
           productId: typeof line === 'object' && line ? (line as { productId?: unknown }).productId : undefined,
-          weightGrams: 500,
+          weightGrams: 1000,
           quantity: typeof line === 'object' && line ? (line as { quantity?: unknown }).quantity : undefined,
         }))
         : [];

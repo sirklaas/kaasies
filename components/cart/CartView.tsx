@@ -34,7 +34,7 @@ export function CartView() {
               <span>Aantal</span>
               <input
                 aria-label={`Aantal ${line.name} van ${line.weightGrams} gram`}
-                max={20}
+                max={16}
                 min={1}
                 onChange={(event) => setQuantity(line.id, Number(event.target.value))}
                 type="number"
@@ -51,7 +51,7 @@ export function CartView() {
         <div><dt>Verzendkosten</dt><dd>{cart.shippingCents ? formatEuros(cart.shippingCents) : 'Gratis'}</dd></div>
         <div><dt>Totaal</dt><dd>{formatEuros(cart.totalCents)}</dd></div>
       </dl>
-      <p className={styles.shippingNote}>Gratis verzending vanaf €&nbsp;60,00 (prototype).</p>
+      <p className={styles.shippingNote}>Gratis verzending vanaf €&nbsp;50,00.</p>
       <Link className={styles.checkoutLink} href="/checkout">Naar afrekenen</Link>
     </section>
   );

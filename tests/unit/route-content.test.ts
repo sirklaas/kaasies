@@ -13,11 +13,9 @@ describe('catalog route content', () => {
 
     const productLinks = screen.getAllByRole('link', { name: /bekijk kaas/i });
 
-    expect(productLinks.map((link) => link.getAttribute('href'))).toEqual([
-      '/shop/jong',
-      '/shop/belegen',
-      '/shop/oud',
-    ]);
+    expect(productLinks).toHaveLength(16);
+    expect(productLinks.map((link) => link.getAttribute('href'))).toContain('/shop/grand-cru');
+    expect(screen.getAllByText(/per kg/i)).toHaveLength(16);
   });
 
   it('shows exactly the active catalog products in the shop', async () => {
@@ -25,10 +23,8 @@ describe('catalog route content', () => {
 
     const productLinks = screen.getAllByRole('link', { name: /bekijk kaas/i });
 
-    expect(productLinks.map((link) => link.getAttribute('href'))).toEqual([
-      '/shop/jong',
-      '/shop/belegen',
-      '/shop/oud',
-    ]);
+    expect(productLinks).toHaveLength(16);
+    expect(productLinks.map((link) => link.getAttribute('href'))).toContain('/shop/minder-zout');
+    expect(screen.getAllByText('Per 1 kg')).toHaveLength(16);
   });
 });

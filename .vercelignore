@@ -2,6 +2,7 @@
 .github/
 .next/
 .superpowers/
+.media/
 .worktrees/
 node_modules/
 tests/
